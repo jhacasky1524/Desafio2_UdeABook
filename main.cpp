@@ -1,57 +1,65 @@
 #include <iostream>
+#include "Album.h"
 #include "Fecha.h"
 #include "ListaDinamica.h"
 #include "MatrizAdyacencia.h"
 #include "Medidor.h"
+#include "Mensaje.h"
+#include "SolicitudAmistad.h"
 
 using namespace std;
 
 int main()
 {
-    // --- Fecha ---
-    Fecha a(13, 10, 2026, 9, 30);
-    Fecha b(29, 2, 2026);            // 2026 no es bisiesto
-    cout << "a = " << a << (a.esValida() ? " (valida)" : " (invalida)") << "\n";
-    cout << "b = " << b << (b.esValida() ? " (valida)" : " (invalida)") << "\n";
-    Fecha c(a);
-    cout << "c == a: " << (c == a) << ", a < 14/10/2026: "
-         << (a < Fecha(14, 10, 2026)) << "\n";
+    // ---------- Foto y Album ----------
+    Album album("Cartagena2026", "/users/X/juanito76/albums/Cartagena2026", 'A');
+    album.agregarFoto(new Foto("/users/X/juanito76/albums/Cartagena2026/Malecon2612.png",
+                               Fecha(5, 1, 2026), 2.4f));
+    album.agregarFoto(new Foto("/users/X/juanito76/albums/Cartagena2026/Bocagrande1.png",
+                               Fecha(6, 1, 2026), 3.1f));
+    album.agregarFoto(new Foto("/users/X/juanito76/albums/Cartagena2026/Castillo.png",
+                               Fecha(7, 1, 2026), 1.8f));
 
-    // --- ListaDinamica ---
-    ListaDinamica<int> lista;
-    for (int i = 0; i < 10; i++)
-        lista.agregar(i * i);
-    ListaDinamica<int> copia(lista);
-    copia[0] = 999;
-    cout << "\noriginal[0] = " << lista[0] << ", copia[0] = " << copia[0] << "\n";
+    cout << "Album '" << album.getNombre() << "' con " << album.getNumFotos() << " fotos\n";
+    cout << "visible (dueno, amigo, extrano): " << album.visiblePara(true, false)
+         << album.visiblePara(false, true) << album.visiblePara(false, false)
+         << "  (esperado 110)\n";
 
-    // --- MatrizAdyacencia: n = 130 cruza el limite de palabra de 64 bits ---
-    MatrizAdyacencia m(130);
-    m.establecer(0, 1);
-    m.establecer(0, 2);
-    m.establecer(0, 100);
-    m.establecer(1, 2);
-    m.establecer(1, 100);
-    m.establecer(1, 129);
-    cout << "\nsonAmigos(0,1) = " << m.sonAmigos(0, 1)
-         << ", sonAmigos(1,0) = " << m.sonAmigos(1, 0)
-         << ", sonAmigos(0,129) = " << m.sonAmigos(0, 129) << "\n";
-    cout << "comunes(0,1) = " << m.contarComunes(0, 1) << " (esperado 2: usuarios 2 y 100)\n";
-    cout << "grado(0) = " << m.grado(0) << ", grado(1) = " << m.grado(1) << "\n";
+    int pos = 0;
+    cout << "carrusel siguiente x3: ";
+    for (int k = 0; k < 3; k++) {
+        pos = album.indiceSiguiente(pos);
+        cout << pos << ' ';
+    }
+    cout << " | previa desde 0: " << album.indiceAnterior(0) << " (esperado 2)\n";
 
-    ListaDinamica<int> amigos;
-    m.amigosDe(1, amigos);
-    cout << "amigos de 1:";
-    for (int i = 0; i < amigos.getTam(); i++)
-        cout << ' ' << amigos[i];
-    cout << "\n";
+    Foto *f = album.getFoto(1);
+    cout << "like 7: " << f->alternarLike(7) << ", like 9: " << f->alternarLike(9)
+         << ", likes = " << f->contarLikes();
+    cout << ", quitar like 7: " << f->alternarLike(7) << ", likes = " << f->contarLikes() << "\n";
+    f->mostrar();
 
-    MatrizAdyacencia m2(m);
-    m2.establecer(5, 6);
-    cout << "copia independiente: m(5,6) = " << m.sonAmigos(5, 6)
-         << ", m2(5,6) = " << m2.sonAmigos(5, 6) << "\n";
+    // ---------- Mensaje ----------
+    Mensaje m(1, 2, "Hola, como vas?", Fecha(13, 10, 2026, 10, 15));
+    cout << "\n" << m << " | leido: " << m.estaLeido();
+    m.marcarLeido();
+    cout << " -> " << m.estaLeido() << "\n";
+    string largo(513, 'a');
+    cout << "validos: normal=" << Mensaje::textoValido("hola")
+         << " vacio=" << Mensaje::textoValido("")
+         << " espacios=" << Mensaje::textoValido("   ")
+         << " 513car=" << Mensaje::textoValido(largo) << "  (esperado 1000)\n";
 
-    Medidor::mostrar(lista.memoria() + copia.memoria() + amigos.memoria()
-                     + m.memoria() + m2.memoria());
+    // ---------- SolicitudAmistad ----------
+    SolicitudAmistad s(4, Fecha(12, 10, 2026));
+    cout << "solicitud de " << s.getIdEmisor() << " el " << s.getFecha() << "\n";
+
+    // ---------- Matriz (prueba anterior resumida) ----------
+    MatrizAdyacencia mat(130);
+    mat.establecer(0, 1); mat.establecer(0, 2); mat.establecer(0, 100);
+    mat.establecer(1, 2); mat.establecer(1, 100); mat.establecer(1, 129);
+    cout << "\ncomunes(0,1) = " << mat.contarComunes(0, 1) << " (esperado 2)\n";
+
+    Medidor::mostrar(album.memoria() + m.memoria() + s.memoria() + mat.memoria());
     return 0;
 }
