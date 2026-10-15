@@ -26,3 +26,9 @@ void Medidor::mostrar(unsigned long memoriaBytes)
     cout << "Iteraciones: " << iteraciones << "\n";
     cout << "Memoria: " << memoriaBytes << " bytes\n";
 }
+
+unsigned long Medidor::bytesCadena(const string &s)
+{
+    // Con cadenas cortas (<= 15 caracteres) el texto vive dentro del propio objeto
+    return s.capacity() > 15 ? s.capacity() + 1 : 0;
+}

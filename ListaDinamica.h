@@ -89,10 +89,16 @@ public:
 
     int getTam() const { return tam; }
 
-    // Bytes ocupados: el objeto mismo + el bloque reservado (capacidad, no tamano)
+    // Bytes del bloque reservado en el heap (capacidad, no tamano)
+    unsigned long bytesDinamicos() const
+    {
+        return static_cast<unsigned long>(cap) * sizeof(T);
+    }
+
+    // Bytes ocupados: el objeto mismo + su bloque reservado
     unsigned long memoria() const
     {
-        return sizeof(*this) + static_cast<unsigned long>(cap) * sizeof(T);
+        return sizeof(*this) + bytesDinamicos();
     }
 };
 
