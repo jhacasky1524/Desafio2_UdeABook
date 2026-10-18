@@ -87,6 +87,8 @@ public:
         tam--;
     }
 
+    void vaciar() { tam = 0; }      // conserva la capacidad reservada
+
     int getTam() const { return tam; }
 
     // Bytes del bloque reservado en el heap (capacidad, no tamano)
