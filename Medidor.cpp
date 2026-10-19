@@ -33,9 +33,11 @@ unsigned long Medidor::bytesCadena(const string &s)
     return s.capacity() > 15 ? s.capacity() + 1 : 0;
 }
 
-void Medidor::mostrar(unsigned long memoriaBytes, unsigned long iter)
+void Medidor::mostrar(unsigned long memoriaBytes, unsigned long iter, const string &externos)
 {
     cout << "\n--- Consumo de recursos ---\n";
     cout << "Iteraciones: " << iter << "\n";
     cout << "Memoria: " << memoriaBytes << " bytes\n";
+    if (!externos.empty())
+        cout << "Componente externo usado: " << externos << "\n";
 }

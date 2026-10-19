@@ -25,6 +25,8 @@ public:
     // Da o quita el like; devuelve true si la foto queda con like de ese usuario
     bool alternarLike(int idUsuario);
     int contarLikes() const;
+    bool tieneLikeDe(int idUsuario) const;
+    int getLike(int i) const;          // indice del usuario que dio el like i-esimo
 
     void mostrar() const;   // visualizar = mostrar la ruta
     unsigned long memoria() const;

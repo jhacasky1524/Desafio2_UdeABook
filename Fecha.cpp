@@ -1,4 +1,5 @@
 #include "Fecha.h"
+#include <chrono>
 #include <iomanip>
 
 using namespace std;
@@ -63,6 +64,28 @@ bool Fecha::esValida() const
     if (hora < 0 || hora > 23 || minuto < 0 || minuto > 59)
         return false;
     return true;
+}
+
+Fecha Fecha::ahora()
+{
+    using namespace std::chrono;
+    long long seg = duration_cast<seconds>(system_clock::now().time_since_epoch()).count();
+    seg -= 5 * 3600;                                   // UTC-5
+    long long dias = seg / 86400, resto = seg % 86400;
+    if (resto < 0) { resto += 86400; dias--; }
+    // Dias desde 1970 -> fecha civil (algoritmo de H. Hinnant)
+    dias += 719468;
+    long long era = (dias >= 0 ? dias : dias - 146096) / 146097;
+    long long doe = dias - era * 146097;
+    long long yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    long long y = yoe + era * 400;
+    long long doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    long long mp = (5 * doy + 2) / 153;
+    long long d = doy - (153 * mp + 2) / 5 + 1;
+    long long m = mp < 10 ? mp + 3 : mp - 9;
+    if (m <= 2) y++;
+    return Fecha(static_cast<short>(d), static_cast<short>(m), static_cast<short>(y),
+                 static_cast<short>(resto / 3600), static_cast<short>((resto % 3600) / 60));
 }
 
 bool Fecha::operator<(const Fecha &otra) const

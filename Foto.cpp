@@ -35,6 +35,21 @@ int Foto::contarLikes() const
     return likes.getTam();
 }
 
+bool Foto::tieneLikeDe(int idUsuario) const
+{
+    for (int k = 0; k < likes.getTam(); k++) {
+        Medidor::contar();
+        if (likes[k] == idUsuario)
+            return true;
+    }
+    return false;
+}
+
+int Foto::getLike(int i) const
+{
+    return likes[i];
+}
+
 void Foto::mostrar() const
 {
     cout << ruta << "  (" << contarLikes() << " likes)\n";

@@ -28,6 +28,8 @@ public:
     void setMinuto(short mi);
 
     bool esValida() const;
+    // Fecha y hora actuales del sistema (hora de Colombia, UTC-5)
+    static Fecha ahora();
 
     // Orden cronologico: anio, mes, dia, hora, minuto
     bool operator<(const Fecha &otra) const;

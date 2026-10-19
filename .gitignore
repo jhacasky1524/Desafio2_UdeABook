@@ -1,0 +1,7 @@
+datos/
+out/
+*.exe
+*.o
+UdeABook
+generador
+build/
